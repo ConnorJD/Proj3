@@ -70,9 +70,3 @@ void joinThreads() {
 		t.join();
 	}
 }
-
-int main() {
-	startThreads("Hello", 2, P5, 10000, 10);
-	setCancelThreads(Cancel);
-	joinThreads();
-}
