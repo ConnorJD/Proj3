@@ -1,0 +1,7 @@
+1. How do you determine the number of threads you should launch to realistically test your application?
+
+You should launch more threads than the number of cores in your machine (or the number of cores times 2) because this will maximize the number of threads running concurrently as well as having some run in series.  If you run twice as many threads than your cpu can handle, then half will run simultaneously and the other half will run together right after.
+
+2. If you are launching several threads, under what circumstances would these threads not run in parallel on a modern processor?
+
+As stated above, the number of threads that can be run in parallel is equal to 2 times the number of cores on the processor.  If more threads than this are run, then the processor would have to run some in series and could not run them all in parallel.  Some would still run in parallel but some would be forced to run in series.

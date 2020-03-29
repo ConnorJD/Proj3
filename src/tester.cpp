@@ -6,9 +6,10 @@
  */
 
 #include "tester.h"
-#include "printts.h"
 #include <vector>
 #include <thread>
+#include <iostream>
+#include "print_ts.h"
 
 using namespace std;
 
@@ -22,21 +23,34 @@ using namespace std;
  */
 
 vector<thread> threads;
+bool Cancel = false;
+
+void doThread(std::string s, WHICH_PRINT wp, int numTimesToPrint, int millisecond_delay) {
+	int numTimesPrinted = 0;
+	while(numTimesPrinted < numTimesToPrint && !Cancel) {
+		switch(wp) {
+		case P1: PRINT1(s);
+			break;
+		case P2: PRINT2(s, s);
+			break;
+		case P3: PRINT3(s, s, s);
+			break;
+		case P4: PRINT4(s, s, s, s);
+			break;
+		case P5: PRINT5(s, s, s, s, s);
+			break;
+		}
+		numTimesPrinted++;
+		this_thread::sleep_for(chrono::milliseconds(millisecond_delay));
+	}
+	if(Cancel) {
+		cout << USER_CHOSE_TO_CANCEL << endl;
+	}
+}
 
 void startThreads(std::string s, int numThreads, WHICH_PRINT wp, int numTimesToPrint, int millisecond_delay) {
 	for(int i = 0 ; i < numThreads ; i++) {
-		switch(wp) {
-		case P1:
-			break;
-		case P2:
-			break;
-		case P3:
-			break;
-		case P4:
-			break;
-		case P5:
-			break;
-		}
+		threads.push_back(thread(doThread, s, wp, numTimesToPrint, millisecond_delay));
 	}
 }
 
@@ -45,12 +59,20 @@ void startThreads(std::string s, int numThreads, WHICH_PRINT wp, int numTimesToP
  * if false then just reset logic used to cancel threads
  */
 void setCancelThreads(bool bCancel) {
-
+	Cancel = true;
 }
 
 /*
  * waits for all threads to complete
  */
 void joinThreads() {
+	for(auto& t : threads){
+		t.join();
+	}
+}
 
+int main() {
+	startThreads("Hello", 2, P5, 10000, 10);
+	setCancelThreads(Cancel);
+	joinThreads();
 }
